@@ -1,0 +1,3 @@
+#test_command sudo cp bin/Main /usr/bin/p2e
+
+haxe build.hxml
