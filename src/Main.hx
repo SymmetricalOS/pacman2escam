@@ -35,7 +35,9 @@ class Main {
 
 		File.saveContent('$pkg-$ver.dat', Json.stringify(dat));
 
-		File.saveContent('$pkg-$ver.install', File.getContent('tmp/.INSTALL') + "\n\n\n\"$@\"");
+		if (FileSystem.exists("tmp/.INSTALL")) {
+			File.saveContent('$pkg-$ver.install', File.getContent('tmp/.INSTALL') + "\n\n\n\"$@\"");
+		}
 
 		var owd = Sys.getCwd();
 		Sys.setCwd("./tmp");
