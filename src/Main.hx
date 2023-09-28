@@ -1,3 +1,4 @@
+import haxe.io.Path;
 import haxe.Json;
 import sys.io.File;
 import sys.FileSystem;
@@ -6,13 +7,42 @@ using StringTools;
 
 class Main {
 	static function main() {
-		var pkg = Sys.args()[0];
-		var ver = Sys.args()[1];
-		var arch = Sys.args()[2];
-		var repo = Sys.args()[3];
+		var path = Path.removeTrailingSlashes(Sys.args()[0]);
+		var dirs = FileSystem.readDirectory(path);
+
+		for (dir in dirs) {
+			var file = File.getContent('./$path/$dir/desc');
+
+			var pkg = "";
+			var ver = "";
+			var arch = "";
+
+			var prevline = "";
+			for (line in file.split("\n")) {
+				if (prevline.contains("%NAME%")) {
+					pkg = line;
+				}
+				if (prevline.contains("%VERSION%")) {
+					ver = line;
+				}
+				if (prevline.contains("%ARCH%")) {
+					arch = line;
+				}
+
+				prevline = line;
+			}
+
+			if (!ver.contains(":") && !file.contains("tar.xz")) {
+				compute(pkg, ver, arch, path);
+			}
+		}
+	}
+
+	static function compute(pkg:String, ver:String, arch:String, r:String) {
+		var repo = 'https://forksystems.mm.fcix.net/archlinux/$r/os/x86_64';
 		var fn = '$pkg-$ver-$arch.pkg.tar.zst';
 		var url = '$repo/$fn';
-		Sys.command("rm -r ./tmp");
+		Sys.command("sudo rm -rf ./tmp");
 		Sys.command('wget $url');
 		FileSystem.createDirectory("tmp");
 		Sys.command('tar -xhf $fn -C ./tmp');
@@ -41,7 +71,7 @@ class Main {
 
 		var owd = Sys.getCwd();
 		Sys.setCwd("./tmp");
-		Sys.command('zip -q -r ../$pkg-$ver.zip *');
+		Sys.command('zip -q -r ../$pkg--$ver.zip *');
 		Sys.setCwd(owd);
 
 		Sys.println("Consider packaging the following dependencies:");
