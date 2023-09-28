@@ -63,10 +63,10 @@ class Main {
 			dat.files.push(file.substring(3));
 		}
 
-		File.saveContent('$pkg-$ver.dat', Json.stringify(dat));
+		File.saveContent('$pkg--$ver.dat', Json.stringify(dat));
 
 		if (FileSystem.exists("tmp/.INSTALL")) {
-			File.saveContent('$pkg-$ver.install', File.getContent('tmp/.INSTALL') + "\n\n\n\"$@\"");
+			File.saveContent('$pkg--$ver.install', File.getContent('tmp/.INSTALL') + "\n\n\n\"$@\"");
 		}
 
 		var owd = Sys.getCwd();
