@@ -35,10 +35,17 @@ class Main {
 
 		File.saveContent('$pkg-$ver.dat', Json.stringify(dat));
 
+		File.saveContent('$pkg-$ver.install', File.getContent('tmp/.INSTALL'));
+
 		var owd = Sys.getCwd();
 		Sys.setCwd("./tmp");
-		Sys.command('zip -r ../$pkg-$ver.zip *');
+		Sys.command('zip -q -r ../$pkg-$ver.zip *');
 		Sys.setCwd(owd);
+
+		Sys.println("Consider packaging the following dependencies:");
+		for (dep in dat.depends) {
+			Sys.println(dep);
+		}
 	}
 
 	static function scan(dir:String, ?root:Bool = false):Array<String> {
